@@ -1,0 +1,179 @@
+* Drzewa Binarne
+** Podstawowe pojęcia
+*** Drzewo Binarne
+Drzewo binarne będę oznaczał przez ~T = (V, E)~, gdzie ~V~ to zbiór wierzchołków, natomiast ~E~ - zbiór krawędzi. Z definicji drzewo binarne to spójny acykliczny graf skierowany taki, że każdy wierzchołek v ma co najwyżej jedną krawędź wchodzącą i dwie wychodzące. 
+*** Korzeń
+Wierzchołek ~v~, który nie ma żadnej krawędzi wchodzącej nazywamy korzeniem (zakładamy, że zawsze taki istnieje) i oznaczamy root.
+*** Liść
+Wierzchołek ~v~, który nie ma żadnej krawędzi wychodzącej nazywamy liściem.
+*** Poddrzewo
+Poddrzewem drzewa binarnego ~T=(V,E)~ zadanego wierzchołkiem ~v~ nazywamy drzewo ~T'~ które zawiera wszystkie wierzchołki, do których istnieje ścieżka od  ~v~, wszystkie krawędzie zawarte w tych ścieżkach oraz wierzchołek ~v~ (jako korzeń).
+*** Głębokość wierzchołka (liczona z dołu do góry)
+Głębokością wierzchołka w drzewie nazywamy liczbę wierzchołków (równoważnie krawędzi) w ścieżce od ~v~ do korzenia drzewa i oznaczamy przez ~depth(v)~. 
+*** Wysokość wierzchołka (liczona z góry na dół)
+Wysokością wierzchołka ~v~ nazywamy długość najdłuższej ścieżki w dół drzewa (długość ścieżki jest mierzona liczbą krawędzi) zaczynającej się w wierzchołku ~v~ i oznaczamy ~height(v)~.
+*** Wysokość drzewa
+Wysokością drzewa nazywamy liczbę ~height(root)~ i oznaczamy krótko przez ~H~.
+** Poruszanie się po drzewie binarnym
+Drzewo binarne jest "lepsze" od posortowanej listy, posortowanej tablicy i od hash mapy w tym sensie, że wszystkie operacje wykonywane na drzewie binarnym mogą być wykonywane w czasie ~O(H)~ [potem zobaczymy, że w przypadku drzew AVL, gdzie ~H = log(#V)~ złożoność tych operacji jest faktycznie logarytmiczna]. 
+Aby móc wykonywać operację *delete*, *insert* oraz *find* należy najpierw określić porządek iterowania się po wierzchołkach. Możliwe są trzy porządki
+- pre-order,
+- in-order,
+- post-order.
+*** Porządek pre-order
+Algorytm przetwarzania drzewa (począwszy od wierzchołka node) w porządku pre-order wygląda następująco. Najpierw przetwarzany jest wierzchołek node, następnie w porządku pre-order przetwarzane jest drzewo subtree(node.left) a na końcu w porządku pre-order przetwarzane jest drzewo subtree(node.right). Poniżej zamieszczono pseudokod algorytmu.
+
+#+begin_src python
+def pre_order(node):
+    if node == null:
+        return
+    output(node)
+    pre_order(node.left)
+    pre_order(node.right)
+#+end_src
+
+*** Porządek in-order
+Algorytm przetwarzania drzewa (począwszy od wierzchołka node) w porządku in-order wygląda analogicznie, jak algorytm pre-order, różni się jedynie kolejnością.
+
+#+begin_src python
+def in_order(node):
+    if node == null:
+        return
+    in_order(node.left)
+    output(node)
+    in_order(node.right)
+#+end_src
+
+*** Porządek post-order
+Tutaj też bez niespodzianki, kolejność to lewo-prawo-środek.
+
+#+begin_src python
+def post_order(node):
+    if node == null:
+        return
+    post_order(node.left)
+    post_order(node.right)
+    output(node)
+#+end_src
+
+*** Implementacja w języku Python
+**** reprezentacja drzewa binarnego
+
+Poniżej zamieściłem implementację wszystkich trzech porządków iterowania się po drzewie binarnym. Implementacja drzewa binarnego jako struktury danych jest bardzo prosta. 
+
+Wszystkie trzy algorytmy zaimplementowano w efektywny sposób (za pomocą stosów), bez bezpośredniego odwoływania się do rekurencji.
+
+#+begin_src python
+class TreeNode:
+    def __init__(
+        self, 
+        parent: TreeNode | None = None,
+        left: TreeNode | None = None,
+        right: TreeNode | None = None,
+        item: Any
+    ) -> None:
+        self._parent = parent
+        self._right = right
+        self._left = left
+        self._item = item
+#+end_src
+
+**** pre-order
+W iterowaniu się po drzewie w porządku pre-order zaczynamy od korzenia, następnie przetwarzamy lewe poddrzewo i na końcu prawe, zatem kolejność odkładania wierzchołków na stos musi być odwrotna.
+#+begin_src python
+def pre_order(node: TreeNode) -> list[TreeNode]:
+    """pop, then go left and go right"""
+    to_visit = [node]
+    result = list()
+    while len(to_visit) > 0:
+        n = to_visit.pop()
+        result.append(n)
+        if n.right:
+            to_visit.append(n.right)
+        if n.left:
+            to_visit.append(n.left)
+
+    return result
+#+end_src
+
+**** in-order
+Porządek in-order zaczynamy od najmniejszego elementu w drzewie, dlatego idziemy w lewo tak długo, jak tylko możemy, następnie zdejmujemy ze stosu pierwszy wierzchołek i idziemy w prawo. Procedurę powtarzamy do momentu kiedy pójście w lewo jest niemożliwe i stos jest pusty.
+#+begin_src python
+def in_order(node: TreeNode) -> list[TreeNode]:
+    """go left as far as possible, then pop and go right"""
+    S = list()
+    result = list()
+    go_on = True
+    while go_on:
+        if node is not None:
+            S.append(node)
+            node = node.left
+        elif len(S) == 0:
+            go_on = False
+        else:
+            node = S.pop()
+            result.append(node)
+            node = node.right
+#+end_src
+
+**** post-order
+Algorytm post-order jest najtrudniejszy do zaimplementowania (w sposób efektywny). Można go zaimplementować za pomocą dwóch stosów lub za pomocą pojedynczego stosu. 
+***** 2 stack implementation
+Implementacja za pomocą dwóch stosów wydaje się być bardziej naturalna. Pierwszy stos służy do odkładania kolejno odwiedzonych wierzchołków w kolejności, która odzwierciedla rekurencyjną definicję porządku post-order (można powiedzieć, że "zastępuje on stos wywołań funkcji"). Drugi stos przechowuje węzły w porządku post-order (w sensie LIFO).
+#+begin_src python
+def post_order(node: TreeNode | None) -> list[TreeNode]:
+    """two stack implementation"""
+    if node is None:
+        return []
+    
+    traversal_stack = [node]
+    postorder_stack = list()
+    postorder = list()
+    
+    while len(traversal_stack) > 0:
+        node = traversal_stack.pop()
+        postorder_stack.append(node)
+        if node.left is not None:
+            traversal_stack.append(node.left)
+        if node.right is not None:
+            traversal_stack.append(node.right)
+    
+    while len(postorder_stack) > 0:
+        postorder.append(postorder_stack.pop())
+    
+    return postorder
+#+end_src
+
+***** 1 stack implementation
+Implementacja za pomocą jednego stosu jest nieco bardziej kłopotliwa. Idea opiera się na następujących dwóch obserwacjach:
+- przed tym, jak przetworzony zostanie dany węzeł, należy przetworzyć jego lewe oraz prawe dziecko (w tej kolejności),
+- węzeł ma pierwszeństwo w byciu przetworzonym tylko jeżeli jest liściem, albo jego dzieci zostały już przetworzone.
+
+W algorytmie post-order realizowanym za pomocą pojedynczego stosu istotne jest to, żeby pamiętać ostatni dodany do wynikowej listy węzeł. Pozwala to na trzymanie informacji o tym, czy prawe dziecko (jeśli istnieje) węzła znajdującego się na szczycie stosu było już przetworzone, czy nie (zmienna pomocnicza ~prev~)
+#+begin_src python
+def post_order(node: TreeNode | None) -> list[TreeNode]:
+    """single stack implementation"""
+    prev = None
+    S = list()
+    result = list()
+    while node is not None or len(S) > 0:
+        # push node to stack to be process
+        if node is not None:
+            S.append(node)
+            node = node.left
+        else:
+            # if I am here, then S[-1] has no left child
+            top = S[-1]
+            # if top.right exist and wasn't processed before
+            if top.right is not None and top.right != prev:
+                # set node to the top.right (to push to S)
+                node = top.right
+            # if top.right does not exist 
+            # or has been already processed
+            else:
+                # there are no nodes to be processed before top
+                prev = S.pop()
+                result.append(prev)
+    return result
+#+end_src
+
