@@ -1,28 +1,27 @@
 * Drzewa Binarne
 ** Podstawowe pojęcia
 *** Drzewo Binarne
-Drzewo binarne będę oznaczał przez ~T = (V, E)~, gdzie ~V~ to zbiór wierzchołków, natomiast ~E~ - zbiór krawędzi. Z definicji drzewo binarne to spójny acykliczny graf skierowany taki, że każdy wierzchołek v ma co najwyżej jedną krawędź wchodzącą i dwie wychodzące. 
+    Drzewo binarne będę oznaczał przez ~T = (V, E)~, gdzie ~V~ to zbiór wierzchołków, natomiast ~E~ - zbiór krawędzi. Z definicji drzewo binarne to spójny acykliczny graf skierowany taki, że każdy wierzchołek v ma co najwyżej jedną krawędź wchodzącą i co najwyżej dwie krawędzie wychodzące. 
 *** Korzeń
-Wierzchołek ~v~, który nie ma żadnej krawędzi wchodzącej nazywamy korzeniem (zakładamy, że zawsze taki istnieje) i oznaczamy root.
+    Wierzchołek ~v~, który nie ma żadnej krawędzi wchodzącej nazywamy korzeniem (zakładamy, że zawsze taki istnieje) i oznaczamy root.
 *** Liść
-Wierzchołek ~v~, który nie ma żadnej krawędzi wychodzącej nazywamy liściem.
+    Wierzchołek ~v~, który nie ma żadnej krawędzi wychodzącej nazywamy liściem.
 *** Poddrzewo
-Poddrzewem drzewa binarnego ~T=(V,E)~ zadanego wierzchołkiem ~v~ nazywamy drzewo ~T'~ które zawiera wszystkie wierzchołki, do których istnieje ścieżka od  ~v~, wszystkie krawędzie zawarte w tych ścieżkach oraz wierzchołek ~v~ (jako korzeń).
+    Poddrzewem drzewa binarnego ~T=(V,E)~ zadanego wierzchołkiem ~v~ nazywamy drzewo ~T'~ które zawiera wszystkie wierzchołki, do których istnieje ścieżka od  ~v~, wszystkie krawędzie zawarte w tych ścieżkach oraz wierzchołek ~v~ (jako korzeń).
 *** Głębokość wierzchołka (liczona z dołu do góry)
-Głębokością wierzchołka w drzewie nazywamy liczbę wierzchołków (równoważnie krawędzi) w ścieżce od ~v~ do korzenia drzewa i oznaczamy przez ~depth(v)~. 
+    Głębokością wierzchołka w drzewie nazywamy liczbę wierzchołków (równoważnie krawędzi) w ścieżce od ~v~ do korzenia drzewa i oznaczamy przez ~depth(v)~. 
 *** Wysokość wierzchołka (liczona z góry na dół)
-Wysokością wierzchołka ~v~ nazywamy długość najdłuższej ścieżki w dół drzewa (długość ścieżki jest mierzona liczbą krawędzi) zaczynającej się w wierzchołku ~v~ i oznaczamy ~height(v)~.
+    Wysokością wierzchołka ~v~ nazywamy długość najdłuższej ścieżki w dół drzewa (długość ścieżki jest mierzona liczbą krawędzi) zaczynającej się w wierzchołku ~v~ i oznaczamy ~height(v)~.
 *** Wysokość drzewa
-Wysokością drzewa nazywamy liczbę ~height(root)~ i oznaczamy krótko przez ~H~.
+    Wysokością drzewa nazywamy liczbę ~height(root)~ i oznaczamy krótko przez ~H~.
 ** Poruszanie się po drzewie binarnym
-Drzewo binarne jest "lepsze" od posortowanej listy, posortowanej tablicy i od hash mapy w tym sensie, że wszystkie operacje wykonywane na drzewie binarnym mogą być wykonywane w czasie ~O(H)~ [potem zobaczymy, że w przypadku drzew AVL, gdzie ~H = log(#V)~ złożoność tych operacji jest faktycznie logarytmiczna]. 
-Aby móc wykonywać operację *delete*, *insert* oraz *find* należy najpierw określić porządek iterowania się po wierzchołkach. Możliwe są trzy porządki
-- pre-order,
-- in-order,
-- post-order.
+    Drzewo binarne jest "lepsze" od posortowanej listy, posortowanej tablicy i od hash mapy w tym sensie, że wszystkie operacje wykonywane na drzewie binarnym mogą być wykonywane w czasie ~O(H)~ [potem zobaczymy, że w przypadku drzew AVL, gdzie ~H = log(#V)~ złożoność tych operacji jest faktycznie logarytmiczna]. 
+    Aby móc wykonywać operację *delete*, *insert* oraz *find* należy najpierw określić porządek iterowania się po wierzchołkach. Możliwe są trzy porządki: 
+    - pre-order,
+    - in-order,
+    - post-order.
 *** Porządek pre-order
-Algorytm przetwarzania drzewa (począwszy od wierzchołka node) w porządku pre-order wygląda następująco. Najpierw przetwarzany jest wierzchołek node, następnie w porządku pre-order przetwarzane jest drzewo subtree(node.left) a na końcu w porządku pre-order przetwarzane jest drzewo subtree(node.right). Poniżej zamieszczono pseudokod algorytmu.
-
+    Algorytm przetwarzania drzewa (począwszy od wierzchołka node) w porządku pre-order wygląda następująco. Najpierw przetwarzany jest wierzchołek node, następnie w porządku pre-order przetwarzane jest drzewo subtree(node.left) a na końcu w porządku pre-order przetwarzane jest drzewo subtree(node.right). Poniżej zamieszczono pseudokod algorytmu.
 #+begin_src python
 def pre_order(node):
     if node == null:
@@ -31,10 +30,9 @@ def pre_order(node):
     pre_order(node.left)
     pre_order(node.right)
 #+end_src
-
+    
 *** Porządek in-order
-Algorytm przetwarzania drzewa (począwszy od wierzchołka node) w porządku in-order wygląda analogicznie, jak algorytm pre-order, różni się jedynie kolejnością.
-
+    Algorytm przetwarzania drzewa (począwszy od wierzchołka node) w porządku in-order wygląda podobnie, jak algorytm pre-order, różni się jedynie kolejnością (wierzchołek node jest przetwarzany po poddrzewie generowanym przez jego lewe dziecko i przed poddrzewem generowanym przez jego prawe dziecko).
 #+begin_src python
 def in_order(node):
     if node == null:
@@ -45,8 +43,7 @@ def in_order(node):
 #+end_src
 
 *** Porządek post-order
-Tutaj też bez niespodzianki, kolejność to lewo-prawo-środek.
-
+    Tutaj też bez niespodzianki, kolejność to lewo-prawo-środek.
 #+begin_src python
 def post_order(node):
     if node == null:
@@ -58,31 +55,31 @@ def post_order(node):
 
 *** Implementacja w języku Python
 **** reprezentacja drzewa binarnego
-
-Poniżej zamieściłem implementację wszystkich trzech porządków iterowania się po drzewie binarnym. Implementacja drzewa binarnego jako struktury danych jest bardzo prosta. 
-
-Wszystkie trzy algorytmy zaimplementowano w efektywny sposób (za pomocą stosów), bez bezpośredniego odwoływania się do rekurencji.
+    Poniżej zamieściłem implementację wszystkich trzech porządków iterowania się po drzewie binarnym. Implementacja drzewa binarnego jako struktury danych jest bardzo prosta. 
 
 #+begin_src python
 class TreeNode:
     def __init__(
         self, 
+        item: Any,
         parent: TreeNode | None = None,
         left: TreeNode | None = None,
         right: TreeNode | None = None,
-        item: Any
     ) -> None:
         self._parent = parent
         self._right = right
         self._left = left
         self._item = item
 #+end_src
-
+    Wszystkie trzy algorytmy zaimplementowano w efektywny sposób (za pomocą stosów), bez bezpośredniego odwoływania się do rekurencji.
 **** pre-order
-W iterowaniu się po drzewie w porządku pre-order zaczynamy od korzenia, następnie przetwarzamy lewe poddrzewo i na końcu prawe, zatem kolejność odkładania wierzchołków na stos musi być odwrotna.
+    W iterowaniu się po drzewie w porządku pre-order zaczynamy od korzenia, następnie przetwarzamy lewe poddrzewo i na końcu prawe, zatem kolejność odkładania wierzchołków na stos musi być odwrotna.
+
 #+begin_src python
-def pre_order(node: TreeNode) -> list[TreeNode]:
+def pre_order(node: TreeNode | None) -> list[TreeNode]:
     """pop, then go left and go right"""
+    if node is None:
+        return []
     to_visit = [node]
     result = list()
     while len(to_visit) > 0:
@@ -92,44 +89,44 @@ def pre_order(node: TreeNode) -> list[TreeNode]:
             to_visit.append(n.right)
         if n.left:
             to_visit.append(n.left)
-
     return result
 #+end_src
 
 **** in-order
-Porządek in-order zaczynamy od najmniejszego elementu w drzewie, dlatego idziemy w lewo tak długo, jak tylko możemy, następnie zdejmujemy ze stosu pierwszy wierzchołek i idziemy w prawo. Procedurę powtarzamy do momentu kiedy pójście w lewo jest niemożliwe i stos jest pusty.
+    Porządek in-order zaczynamy od najmniejszego elementu w drzewie, dlatego idziemy w lewo tak długo, jak tylko możemy, następnie zdejmujemy ze stosu pierwszy wierzchołek i idziemy w prawo. Procedurę powtarzamy do momentu kiedy pójście w lewo jest niemożliwe i stos jest pusty.
+
 #+begin_src python
 def in_order(node: TreeNode) -> list[TreeNode]:
     """go left as far as possible, then pop and go right"""
     S = list()
     result = list()
-    go_on = True
-    while go_on:
+    while node is not None or len(S) > 0:
         if node is not None:
             S.append(node)
             node = node.left
-        elif len(S) == 0:
-            go_on = False
         else:
             node = S.pop()
             result.append(node)
             node = node.right
+    
+    return result
 #+end_src
 
 **** post-order
-Algorytm post-order jest najtrudniejszy do zaimplementowania (w sposób efektywny). Można go zaimplementować za pomocą dwóch stosów lub za pomocą pojedynczego stosu. 
+    Algorytm post-order jest najtrudniejszy do zaimplementowania (w sposób efektywny). Można go zaimplementować za pomocą dwóch stosów lub za pomocą pojedynczego stosu. 
 ***** 2 stack implementation
-Implementacja za pomocą dwóch stosów wydaje się być bardziej naturalna. Pierwszy stos służy do odkładania kolejno odwiedzonych wierzchołków w kolejności, która odzwierciedla rekurencyjną definicję porządku post-order (można powiedzieć, że "zastępuje on stos wywołań funkcji"). Drugi stos przechowuje węzły w porządku post-order (w sensie LIFO).
+    Implementacja za pomocą dwóch stosów wydaje się być bardziej naturalna. Pierwszy stos (~traversal_stack~) służy do odkładania kolejno odwiedzonych wierzchołków w kolejności, która odzwierciedla rekurencyjną definicję porządku post-order (można powiedzieć, że "zastępuje on stos wywołań funkcji"). Drugi stos (~postorder_stack~) przechowuje węzły w porządku post-order (w sensie LIFO).
+    
 #+begin_src python
 def post_order(node: TreeNode | None) -> list[TreeNode]:
     """two stack implementation"""
     if node is None:
         return []
-    
+
     traversal_stack = [node]
     postorder_stack = list()
     postorder = list()
-    
+
     while len(traversal_stack) > 0:
         node = traversal_stack.pop()
         postorder_stack.append(node)
@@ -137,19 +134,20 @@ def post_order(node: TreeNode | None) -> list[TreeNode]:
             traversal_stack.append(node.left)
         if node.right is not None:
             traversal_stack.append(node.right)
-    
+
     while len(postorder_stack) > 0:
         postorder.append(postorder_stack.pop())
-    
+
     return postorder
 #+end_src
 
 ***** 1 stack implementation
-Implementacja za pomocą jednego stosu jest nieco bardziej kłopotliwa. Idea opiera się na następujących dwóch obserwacjach:
-- przed tym, jak przetworzony zostanie dany węzeł, należy przetworzyć jego lewe oraz prawe dziecko (w tej kolejności),
-- węzeł ma pierwszeństwo w byciu przetworzonym tylko jeżeli jest liściem, albo jego dzieci zostały już przetworzone.
+    Implementacja za pomocą jednego stosu jest nieco bardziej kłopotliwa. Idea opiera się na następujących dwóch obserwacjach:
+    - przed tym, jak przetworzony zostanie dany węzeł, należy przetworzyć jego lewe oraz prawe dziecko (w tej kolejności),
+    - węzeł ma pierwszeństwo w byciu przetworzonym tylko jeżeli jest liściem, albo jego dzieci zostały już przetworzone.
 
-W algorytmie post-order realizowanym za pomocą pojedynczego stosu istotne jest to, żeby pamiętać ostatni dodany do wynikowej listy węzeł. Pozwala to na trzymanie informacji o tym, czy prawe dziecko (jeśli istnieje) węzła znajdującego się na szczycie stosu było już przetworzone, czy nie (zmienna pomocnicza ~prev~)
+    W algorytmie post-order realizowanym za pomocą pojedynczego stosu istotne jest to, żeby pamiętać ostatni dodany do wynikowej listy węzeł. Pozwala to na trzymanie informacji o tym, czy prawe dziecko węzła znajdującego się na szczycie stosu (jeśli istnieje) było już przetworzone, czy nie (zmienna pomocnicza ~prev~).
+
 #+begin_src python
 def post_order(node: TreeNode | None) -> list[TreeNode]:
     """single stack implementation"""
@@ -168,12 +166,216 @@ def post_order(node: TreeNode | None) -> list[TreeNode]:
             if top.right is not None and top.right != prev:
                 # set node to the top.right (to push to S)
                 node = top.right
-            # if top.right does not exist 
-            # or has been already processed
-            else:
-                # there are no nodes to be processed before top
-                prev = S.pop()
-                result.append(prev)
+                # if top.right does not exist 
+                # or has been already processed
+        else:
+            # no nodes to be processed before top
+            prev = S.pop()
+            result.append(prev)
     return result
 #+end_src
 
+** Podstawowe operacje na drzewie binarnym
+    Załóżmy, że mamy dane drzewo binarne ~T~ z porządkiem in-order. Celem tego podrozdziału jest zdefiniowanie określonych operacji, jakie można wykonywać na drzewie ~T~. Złożoność czasowa wszystkich opisanych niżej operacji to ~O(H)~.
+*** Najmniejszy element w poddrzewie
+    Załóżmy, że mamy dany wierzchołek ~v~ drzewa ~T~. Wówczas najmniejszy element w poddrzewie ~subtree(v)~ (w sensie porządku pre-order, który nawiasem mówiąc jest *dobrym* oraz *liniowym* porządkiem) będziemy oznaczać przez ~subtree_min(v)~. Algorytm wyznaczania najmniejszego elemetu w danym poddrzewie jest bardzo prosty.
+
+#+begin_src python
+def subtree_min(node: TreeNode | None) -> TreeNode | None:
+    """return minimal element if there is one, else None"""
+    if node is None:
+        return node
+    while node.left is not None:
+        node = node.left
+    return node
+#+end_src
+
+*** Największy element w poddrzewie
+    Największy element w poddrzewie wyznaczonym przez wierzchołek ~v~ zdefiniowany jest w sposób analogiczny, będziemy go oznaczać przez ~subtree_max(v)~.
+    Algorytm wyznaczania elementu największego jest analogiczny jak algorytm wyznaczania elementru najmniejszego.
+
+#+begin_src python
+def subtree_max(node: TreeNode | None) -> TreeNode | None:
+    """return maximal element if there is one, else None"""
+    if node is None:
+        return node
+    while node.right is not None:
+        node = node.right
+    return node
+#+end_src
+
+*** Następnik w poddrzewie
+    Dla wierzchołka ~v~ drzewa ~T~ następnik wierzchołka ~v~ definiujemy jako wierzchołek przetwarzany bezpośrednio po wierzchołku ~v~ w porządku in-order i oznaczamy przez ~successor(v)~. Oczywiście, jeżeli wierzchołek ~v~ jest największym elementem w ~T~, wówczas nie istnieje jego następnik. 
+    Aby wyznaczyć następnik należy wykonać następujące kroki (poprzednika można wyznaczyć w sposób analogiczny). Jeżeli ~v~ posiada prawe dziecko, to ono jest następnikiem (z definicji in-order). W przeciwnym wypadku kładziemy ~w <- v~ a następnie jeżeli ~w~ nie jest lewym dzieckiem swojego rodzica idziemy "w górę drzewa", tj. podstawiamy ~w <- w.parent~. Pierwsze ~w~, dla którego ~w == w.parent.left~ jest następnikiem wierzchołka ~v~, jeżeli takie ~w~ nie istnieje, wówczas ~v~ nie posiada następnika. 
+
+#+begin_src python
+def successor(node: TreeNode | None) -> TreeNode | Node:
+    """return successor if there is one, else return None"""
+    if node is None:
+        return node
+    if node.right is not None:
+        return subtree_min(node.right)
+    while node.parent:
+        if node == node.parent.left:
+            return node.parent
+        node = node.parent
+    return None
+#+end_src
+
+*** Poprzednik w poddrzewie
+    Analogicznie definiujemy poprzednika wierzchołka ~v~ (ozn. ~predecessor(v)~). Algorytm znajdowania poprzednika jest następujący.
+
+#+begin_src python
+def predecessor(node: TreeNode | None) -> TreeNode | None:
+    """return predecessor if there is one, else return None"""
+    if node is None:
+        return None:
+    if node.left is not None:
+        subtree_max(node.left)
+    while node.parent is not None:
+        if node.parent.right == node:
+            return node
+        node = node.parent
+    return None
+#+end_src
+
+*** Wstawianie elementu do drzewa "przed"
+    Dla danego drzewa ~T~, chcemy wstawić nowy węzeł ~w~ za węzłem ~v~ tak, aby w drzewie po operacji wstawiania zachodziło ~successor(v) == w~. Aby wstawić węzeł ~w~ za węzeł ~v~ należy postępować zgodnie z następującym algorytmem.
+
+    Jeżeli nie istnieje prawe dziecko węzła ~v~, kładziemy ~w <- v.right~ oraz ~w.parent <- v~. W przeciwnym wypadku, (jeśli prawe dziecko istnieje) należy wykonać następujące kroki:
+    - ~t <- successor(v)~,
+    - ~t.left <- w~,
+    - ~w.parent <- t~. 
+
+    Poniżej przedstawiono przykładową implementację w języku Python.
+
+#+begin_src python
+def insert_after(w: TreeNode, v: TreeNode) -> None:
+    """insert node w after node v"""
+    if v.right is None:
+        v.right = w
+        w.parent = v
+    else:
+        # successor(v) exists, since v.right is not None
+        t = successor(v)
+        # successor(v) == subtree_min(v.right) => t.left is None
+        t.left = w
+        w.parent = t
+#+end_src
+
+*** Wstawianie elementu do drzewa "po"
+    Aby wstawić nowy węzeł ~w~ przed dany węzeł ~v~ należy postępować analogicznie. Poniżej zamieszczono kod algorytmu w języku Python.
+
+#+begin_src python
+def insert_before(w: TreeNode, v: TreeNode) -> None:
+    """insert node w before node v"""
+    if v.left is None:
+        v.left = w
+        w.parent = v
+    else:
+        # predecessor exists, since v.left is not None
+        t = predecessor(v)
+        # predecessor(v) == subtree_max(v.left) => t.right is None
+        t.right = w
+        w.parent = t
+#+end_src
+
+    *Uwaga*: aby wstawić nowy element ~w~ do drzewa BST, należy najpierw znaleźć najmniejsze ograniczenie górne ~w~ w drzewie i wstawić ~w~ przed to ograniczenie lub znaleźć największe ograniczenie dolne ~w~ w drzewie i wstawić ~w~ za tym ograniczeniem dolnym.
+*** Usuwanie elementu z drzewa
+    Dla danego drzewa ~T~ oraz wierzchołka ~v~ chcemy usunąć wierzchołek ~v~ z drzewa ~T~. Operację tę oznaczymy przez ~remove(v)~. Algorytm jest następujący.
+
+    Dopóki ~v~ nie jest liściem wykonujemy następujące kroki.
+    - Jeżeli ~v~ posiada lewe dziecko, wówczas istnieje ~predecessor(v)~, możemy zamienić ~v~ z ~predecessor(v)~ [po usunięciu ~v~ ta zamiana nie zaburzy koleności w porządku in-order].
+    - Jeżeli ~v~ posiada prawe dziecko, wówczas istnieje ~successor(v)~, możemy więc zamienić ~v~ z ~successor(v)~ [ta zmiana nie zaburzy porządku in-order po usunięciu ~v~ z drzewa]
+      
+    Kiedy już ~v~ jest liściem możemy usunąć ~v~ z drzewa.
+    - Jeśli ~v.parent.left == v~ podstawiamy ~v.parent.left <- None~.
+    - Jeśli ~v.parent.right == v~ podstawiamy ~v.parent.right <- None~.
+#+begin_src python
+def remove(v: ListNode | None) -> None:
+    if v is None:
+        return
+    while any(child is not None for child in [v.left, v.right]):
+        t = predecessor(v) if v.left is not None else successor(v)
+        swap_nodes(t, v)
+    if v.parent.left == v:
+        v.parent.left = None
+    else:
+        v.parent.right = None
+#+end_src
+
+* Drzewa AVL
+Drzewo AVL to binarne drzewo poszukiwań (BST) ~T = (V,E)~, dla którego ~O(h) = O(log|V|)~. Żeby skonstruować taką strukturę danych, będziemy potrzebowali wprowadzić kilka pojęć.
+** Wzbogacanie drzewa (tree augmentation)
+Aby zagwarantować, że drzewo będzie zbalansowane (tj. że będzie miało logarytmiczną wysokość / głębokość), przy wykonywaniu operacji dodawania / usuwania elementu z drzewa może okazać się, że potrzebna jest dodatkowa praca, polegająca na przeorganizowaniu drzewa w taki sposób, żeby pozostało zbilansowane. Aby można było taką pracę wykonać efektywnie, niezbędne jest przechowywanie w każdym węźle dodatkowych informacji [te informacje dla każdego węzła powinny zajmować stałą pamięć] na temat jego głębokości (stąd nazwa, wzbogacamy dotychczasową strukturę danych o dodatkowe pola). Poniżej kod w języku Python.
+*** Implementacja struktury wzbogaconego drzewa
+#+begin_src python
+class AVLTreeNode(TreeNode):
+    def __init__(
+        self, 
+        item: Any,
+        parent: TreeNode | None = None,
+        left: TreeNode | None = None,
+        right: TreeNode | None = None,
+        height: int = 0,
+    ) -> None:
+        super().__init__(parent, left, right, item)
+        self._height = height
+#+end_src
+
+*** Przykład wzbogacenia: indeks węzła
+Załóżmy, że mamy do czynienia z drzewem binarnym ~T~ z porządkiem in-order i chcemy umożliwić dostęp do jego  węzłów za pomocą operacji indeksowania ~[]~. Jeżeli wzbogacimy strukturę węzła ~v~ o dodatkowe pole ~v.size~, które będzie nas informowało o tym, ile węzłów znajduje się w poddrzewie ~subtree(v)~, wówczas możemy w łatwy sposób opracować algorytm wyłuskiwania węzła o i-tym indeksie z drzewa. Algorytm wyszukiwania wierzchołka o indeksie ~i~ jest następujący. 
+
+Zaczynamy od przypisania ~v <- root~. Dopóki nie prawdą jest, że ~v.size == i~ wykonujemy następujące kroki:
+- jeżeli ~v.size < i~, wówczas kładziemy ~v <- v.left~ (szukany wierzchołek jest w lewym poddrzewie)
+- jeżeli ~v.size > i~, wówczas kładziemy
+  - ~v <- v.right~ (szukany wierzchołek jest w prawym poddrzewie)
+  - ~i <- i - (v.left.size + 1)~ ("zapominamy" o wierzchołku ~v~ i o lewym poddrzewie, więc przesuwamy indeksowanie)
+
+Oczywiście powyższy algorytm jest stosowalny, o ile jesteśmy w stanie zagwarantować, że przy dodawaniu i usuwaniu elementu potrzebujemy wykonać tylko ~O(h)~ operacji, żeby upewnić się, że po usunięciu lub dodaniu elementu wartości pola ~size~ w każdym węźle będą poprawne. W szczególności dodanie elementu na początku powoduje konieczność zwiększenia o jeden indeksów wszystkich dotychczasowych węzłów w drzewie. 
+*** Subtree property [ST]
+Załóżmy, że w każdym wierzchołku ~v~ przechowywane jest dodatkowe pole ~P(v)~. Powiemy, że pole ~P~ ma własność ~[ST]~, jeżeli ~P(v)~ można wyznaczyć z ~P(v.left)~ oraz z ~P(v.right)~ w stałym czasie. Oczywiście ~P=size~ z powyższego przykładu ma własność ~[ST]~, ponieważ ~v.size = v.left.size + v.right.size + 1~ [jeśli ~v~ nie posiada lewego/prawego dziecka, wówczas wartości ~v.left.size~, ~v.right.size~ wynosi ~0~].
+
+Zauważmy, że każde pole ~P~, które ma własność ~[ST]~ może być dynamicznie aktualizowane (w razie potrzeby) po przeprowadzeniu operacji dodania / usunięcia liścia w drzewie w czasie ~O(h)~. Jest to trywialna, ale bardzo ważna obserwacja.
+
+Zwróćmy uwagę na to, że operacje dodawania lub usuwania elementu z drzewa BST sprowadzały się do dodawania lub usuwania liścia z danego drzewa. Powróćmy raz jeszcze do ~P(v) = v.size~. W przypadku dodania/usunięcia liścia ~v~, potrzebujemy zwiększyć/zmniejszyć o jeden pole ~size~ każdego przodka liścia ~v~, co wymaga przeprowadzenia ~O(h)~ operacji. Tak jest w ogólności (z dowolnym polem ~P~ o własności ~[ST]~).
+
+Często spotyka się zależności pomiędzy ~P(V)~ oraz ~P(v.left), P(v.right)~ wyrażone funkcjami ~max, min, sum, ...~.
+
+Przykład zależności, które nie wyznaczają pola o własności ~[ST]~ to np. ~NWW, NWD~. Bardziej praktycznym przykładem jest pole opisane zależnością ~P(v) = in-order index of v in the tree~. Tak zdefiniowane ~P~ można wyrazić poprzez wzór ~P(v) = max{P(w): w in subtree(v)} + 1~. Istotnie, załóżmy że do drzewa dodany został wierzchołek w indeksie ~i = 0~. Oznacza to konieczność przesunięcia *wszystkich* indeksów wierzchołków istniejących już wcześniej o jeden w prawo, zatem złożoność tej operacji to ~O(|V|)~.
+
+Kolejnym (nieoczywistym) przykładem pola bez własności ~[ST]~ jest głębokość wierzchołka (to dziadostwo liczone z góry do dołu). Istotnie, w tym przypadku ~P(v) = P(v.parent) + 1~. Dlaczego to pole nie zależy od wartości w lewym i prawym dziecku - wystarczy pomyśleć o liściach (dodajemy nowy element do drzewa, musimy popatrzeć się w górę żeby wyznaczyć jego głębokość) albo o sytuacji, w której dodajemy nowy wierzchołek jako rodzica dotychczasowego korzenia.
+
+Można powiedzieć, że (w pewnym sensie) własność ~[ST]~ oznacza, że dane pole reprezentuje lokalną własność drzewa.
+** Zbilansowane drzewo binarne
+Zbilansowane drzewo binarne ~T = (V,E)~ to takie, w którym O(h) = O(log |V|). Poniżej opiszemy w jaki sposób można zagwarantować sobie to, że drzewo będzie miało logarytmiczną wysokość. 
+*** Rotacja drzewa
+Dla danego zbioru węzłów ~V~ jest jest wiele (wykładniczo wiele) drzew binarnych ~T=(V,E)~ z porządkiem in-order. Nas interesuje takie drzewo, dla którego ~O(h) = O(log |V|)~. Poniższy obrazek przedstawia dwie operacje
+- ~right_rotate(Y)~ [strzałka w prawo],
+- ~left_rotate(X)~ [strzałka w lewo].
+#+CAPTION: Rotacja drzewa binarnego
+#+NAME:   fig:tree_rot
+#+ATTR_HTML: :width 600
+[[./img/tree_rotation.jpg]]
+
+Widać wyraźnie, że porządek in-order w obu drzewach (lewym i prawym) pozostaje bez zmian, tj. ~A-X-B-Y-C~. Uwaga: operacja w obie strony zakłada, że wskaźnik rodzica jest przepinany (rodzic ~X~ staje się rodzicem ~Y~ w lewo i na odwrót w prawo]. 
+
+Po lewej stronie ~depth(A) > depth(C)~, po prawej stronie ~depth(A) < depth(C)~, możemy więc je "zamienić". 
+*** Height balance (bilansowanie wysokością? o_O czy jakoś tak)
+Na początku musimy zdefiniować ~przesunięcie wierzchołka~. Dla danego drzewa ~T~ i wierzchołka w tym drzewie ~v~, przesunięciem wierzchołka ~v~ nazywamy wielkość ~v.left.hight - v.right.height~ i oznaczamy przez ~skew(v)~. Powiemy, że *drzewo ~T~ ma zbalansowaną wysokość* ~[HB]~, jeżeli ~|skew(v)| <= 1~ dla dowolnego wierzchołka ~v~ w drzewie ~T~. Drzewo o zbalansowanej wysokości nazwiemy *drzewem AVL* (w drzewach AVL dodatkowym polem jest wysokość, tj. ~P(v) = v.height~).
+
+Zauważmy, że *drzewo o zbalansowanej wysokości* jest *zbalansowane*. Rozważmy drzewo o zbalansowanej wysokości ~T~, dla którego ~skew(v) = 1~ dla każdego wierzchołka ~v~ z ~T~. Jeżeli pokażemy, że to drzewo jest zbalansowane, to dowolne inne drzewo o zbalansowanej wysokości też będzie zbalansowane. Oznaczmy przez ~N(h)~ liczbę wierzchołków w takim drzewie o wysokości ~h~. Zauważmy wówczas, że  ~N(h) = N(h-1) + N(h-2) + 1~. Widzimy więc, że mamy do czynienia z rekurencją podobną do rekurencji opisującej ciąg Fibonacciego, a zatem ~N(h) = O(2^h)~, co oznacza, że ~O(|V|) = O(2^h)~, a więc ~O(h) = O(log |V|)~.
+
+Obserwacja odwrotna jest wspomniana tylko dlatego, żeby stwierdzić, że implikacja w drugą stronę również zachodzi. 
+
+*** Operacje w drzewie AVL
+Ponieważ drzewo AVL jest drzewem binarnym, rozważymy jedynie operacje dodawania elementu do zbioru oraz usuwania elementu ze zbioru. Jak wyżej zauważyliśmy, te operacje (eventually) sprowadzają się do dodawania albo usuwania liścia w drzewie. Musimy zatem rozkminić, w jaki sposób zagwarantować, że po dodaniu lub usunięciu liścia, dla wszystkich pozostałych wierzchołków ~v~ prawdą będzie, że ~|skew(v)| <= 1~. 
+
+Oznaczmy usuwany lub dodany wierzchołek przez ~w~. W pierwszej kolejności musimy przejrzeć wszystkich przodków ~w~ (będzie ich co najwyżej ~O(h) = O(log |V|)~, więc spoko). Jak znajdziemy delikwenta ~t~, dla którego ~|skew(t)| = 2~, to tak. Załóżmy, że ~t~ jest węzłem, który jest najdalej od korzenia (ze wszystkich węzłów o tej własności). 
+
+WLOG ~skew(t) = 2~. Mamy trzy przypadki:
+1. ~skew(v.right) = 1~ [ponieważ ~skew(t) > 0~, więc ~t.right~ istnieje], wówczas wykonujemy ~rotate_right(t)~
+2. ~skew(v.right) = 0~ przypadek analogiczny jak poprzedni, również ~rotate_right(t)~
+3. ~skew(v.right) = -1~ [przypadek trudny], wykonujemy ~right_rotate(t.right)~, ~left_rotate(t)~
+   
+** Ćwiczenie: zaimplementuj drzewo AVL z operacjami *add*, *delete*, *sequence* oraz *at_index*.
